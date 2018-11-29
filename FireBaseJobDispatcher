@@ -1,0 +1,67 @@
+MyService.java:
+
+Public class MyService extends JobService{
+BackgroundTasl backgroundTask;
+
+@override
+Public Boolean onStartJob = new BackgroundTask()
+{
+        @override
+         Protected void onPostExecute (String s){
+          Toast.makeText(getApplicationContext().”Message from BackgroundTask: “ +s,Toast.LENGTH_LONG).show();
+jobFinished(job,false);
+}
+};
+backgroundTask.execute(); 
+return true;
+}
+
+
+@override
+ Public Boolean onStopJob(JobParameters job){
+return true;
+}
+Public static class BackgroundTask extends AsyncTask<Void,Void,String>
+{
+@override
+ Protected String doInBackground(Void… voids){
+Return “Hello from background job”;
+}
+}
+
+MainActivity:
+
+Public class MainActivity extends AppComatActivity{
+Private static final string Job_Tag=”my_Job_tag”;
+Private FirebaseJobDispatcher jobDispatcher;
+
+@override
+Protected void onCreate(Bundle savedInstanceState){
+Super.onCreate(savedinstanceState);
+setContentView(R.layout.activity_main);
+jobDispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+}
+
+Public void startJob(View view)
+{
+Job job =jobDispatcher.newJobBuilder();
+SetService(MyService.class).
+setLifeLine(LifeLine.FOREVER).
+setRecurring(true).
+setTag(Job_Tag).
+setTrigger(Trigger.executionWindow(10,15)).
+setRetryStrategy(retryStrategy.DEFAULT_EXPONENTIAL).
+setReplaceCurrent(false).
+setConstraint(constraint.ON_ANY_NETWORK)
+.build();
+jobDispatcher.mustSchedule(job);
+Toast.makeText(this,”Job Sheduled”,Toast.LENGTH_SHORT).show();
+}
+Public void stopJob(View view)
+{
+jobDispatcher.cancel(Job_Tag);
+Toast.makeText(this,”Job Cancelled”,Toast.LENGTH_SHORT).show();
+}
+}
+
+
